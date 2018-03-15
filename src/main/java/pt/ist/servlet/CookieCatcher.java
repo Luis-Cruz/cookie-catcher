@@ -92,7 +92,7 @@ public class CookieCatcher implements Filter {
                         final String domain = cookie.getDomain();
                         final String path = cookie.getPath();
                         final String comment = cookie.getComment();
-                        logger.info("Found new Cookie: name = {} ; value = {} ; isHttpOnly = {} ; secure = {} ; maxAge = {} ; version = {} ; domain = {} ; path = {} ; comment = {}",
+                        logger.debug("Found new Cookie: name = {} ; value = {} ; isHttpOnly = {} ; secure = {} ; maxAge = {} ; version = {} ; domain = {} ; path = {} ; comment = {}",
                                 name, value, httpOnly, secure, maxAge, version, domain, path, comment);
                         hashes.add(hash);
                     }
