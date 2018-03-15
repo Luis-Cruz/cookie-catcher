@@ -12,7 +12,7 @@
 
     <groupId>pt.ist</groupId>
     <artifactId>cookie-catcher</artifactId>
-    <version>DEV-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>Cookie Catcher</name>
