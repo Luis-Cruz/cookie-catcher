@@ -33,7 +33,6 @@ public class CookieCatcher implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        logger.info("CookieCatcher up and running.");
         defaultCookieHandler = CookieHandler.getDefault();
         CookieHandler.setDefault(new CookieHandler() {
             @Override
@@ -51,6 +50,8 @@ public class CookieCatcher implements Filter {
 
         names = new HashSet<>();
         hashes = new HashSet<>();
+
+        logger.info("CookieCatcher up and running.");
     }
 
     @Override
@@ -64,7 +65,9 @@ public class CookieCatcher implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
         logCookieInfo((HttpServletRequest) request);
-        chain.doFilter(request, response);
+        if (chain != null) {
+            chain.doFilter(request, response);
+        }
     }
 
     private void logCookieInfo(final HttpServletRequest request) {
