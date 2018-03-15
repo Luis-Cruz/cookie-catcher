@@ -33,6 +33,7 @@ public class CookieCatcher implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
+        logger.info("CookieCatcher up and running.");
         defaultCookieHandler = CookieHandler.getDefault();
         CookieHandler.setDefault(new CookieHandler() {
             @Override
