@@ -67,6 +67,9 @@ public class CookieCatcher implements Filter {
     }
 
     private void logCookieInfo(final HttpServletRequest request) {
+        if (request == null || request.getCookies() == null) {
+            return;
+        }
         for (final Cookie cookie : request.getCookies()) {
             final String name = cookie.getName();
             if (logger.isInfoEnabled()) {
