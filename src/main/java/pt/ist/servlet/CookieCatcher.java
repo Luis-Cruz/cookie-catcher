@@ -26,13 +26,17 @@ import org.slf4j.LoggerFactory;
 public class CookieCatcher implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(CookieCatcher.class);
+    public static final String NEW_COOKIE_LOG =
+            "Found new Cookie: name = {} ; value = {} ; isHttpOnly = {} ; secure = {} ; maxAge = {} ; version = {} ; domain = {} ; path = {} ; comment = {}";
 
     private CookieHandler defaultCookieHandler = null;
     private Set<String> names = null;
     private Set<String> hashes = null;
+    private Set<String> blacklist;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
+        
         defaultCookieHandler = CookieHandler.getDefault();
         CookieHandler.setDefault(new CookieHandler() {
             @Override
@@ -50,6 +54,7 @@ public class CookieCatcher implements Filter {
 
         names = new HashSet<>();
         hashes = new HashSet<>();
+        blacklist = CookieCatcherConfiguration.blacklist();
 
         logger.info("CookieCatcher up and running.");
     }
@@ -84,7 +89,9 @@ public class CookieCatcher implements Filter {
                     }
                 }
             }
-            if (logger.isDebugEnabled()) {
+            boolean isBlacklisted = blacklist.contains(name);
+            
+            if (logger.isDebugEnabled() || isBlacklisted) {
                 synchronized (hashes) {
                     final String value = cookie.getValue();
                     final String hash = hashFor(name, value);
@@ -96,12 +103,20 @@ public class CookieCatcher implements Filter {
                         final String domain = cookie.getDomain();
                         final String path = cookie.getPath();
                         final String comment = cookie.getComment();
-                        logger.debug("Found new Cookie: name = {} ; value = {} ; isHttpOnly = {} ; secure = {} ; maxAge = {} ; version = {} ; domain = {} ; path = {} ; comment = {}",
-                                name, value, httpOnly, secure, maxAge, version, domain, path, comment);
+                        log(name, value, httpOnly, secure, maxAge, version, domain, path, comment, isBlacklisted);
                         hashes.add(hash);
                     }
                 }
             }
+        }
+    }
+
+    private void log(String name, String value, boolean httpOnly, boolean secure, int maxAge, int version, String domain,
+            String path, String comment, boolean warn) {
+        if (warn) {
+            logger.warn(NEW_COOKIE_LOG, name, value, httpOnly, secure, maxAge, version, domain, path, comment);
+        } else {
+            logger.debug(NEW_COOKIE_LOG, name, value, httpOnly, secure, maxAge, version, domain, path, comment);
         }
     }
 
